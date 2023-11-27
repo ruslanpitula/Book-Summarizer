@@ -99,16 +99,15 @@ def tokenize_into_chunks(text, chunk_size=70000):
 
     return chunks
 
-def summarize_with_anthropic(text_chunk):
+def summarize_with_anthropic(text_chunk, instructions):
     anthropic = Anthropic()
-    prompt = f"{HUMAN_PROMPT} Craft a comprehensive summary that captures the essence of the following text by highlighting key plot points and highlighting any intriguing, humorous, salacious or lesser-known details:\n{text_chunk}{AI_PROMPT}"
 
     animate_processing()
 
     completion = anthropic.completions.create(
         model="claude-2.1",
         max_tokens_to_sample=100000,
-        prompt=prompt,
+        prompt=f"{HUMAN_PROMPT} {instructions}:\n{text_chunk}{AI_PROMPT}",
     )
 
     # clear the processing animation
@@ -125,12 +124,14 @@ def main():
         print('Invalid file path or file is not an EPUB. Please try again.')
         epub_path = curses.wrapper(file_picker)
 
+    instructions = input("Enter summarization instructions (or press Enter for default 'Summarize the following text'): ") or "Summarize the following text"
+
     text = epub_to_text(epub_path)
     chunks = tokenize_into_chunks(text)
     
     for i, chunk in enumerate(chunks):
 
-        summary = summarize_with_anthropic(chunk)
+        summary = summarize_with_anthropic(chunk,instructions)
         print(f'Summary of section {i + 1} of {len(chunks)+1}:              \n\n{summary}\n')
 
     print(f'Done! Text has been tokenized and summaries were generated.')
