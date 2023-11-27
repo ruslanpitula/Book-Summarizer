@@ -19,4 +19,4 @@ A sample project using the anthropic/claude API to summarize epub books
 
 ## Sample output
 
-![example output](./example_output.png)
+![example output](./example_output2.png)
