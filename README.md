@@ -17,4 +17,6 @@ A sample project using the anthropic/claude API to summarize epub books
 * ```bash build.sh```
 * ```bash run.sh```
 
+## Sample output
+
 ![example output](./example_output.png)
