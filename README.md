@@ -20,3 +20,8 @@ A sample project using the anthropic/claude API to summarize epub books
 ## Sample output
 
 ![example output](./usage.png)
+
+## TODOs
+
+* fix curses line overflow when picking instruction text
+* better instruction testing

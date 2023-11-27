@@ -80,6 +80,45 @@ def file_picker(stdscr):
     selected_file = get_epub_files()[current_row]
     return selected_file
 
+def get_instruction_input(stdscr):
+    # Set up the screen
+    curses.curs_set(0)
+    stdscr.clear()
+    stdscr.refresh()
+
+    # Define instruction options
+    instruction_options = [
+        "Summarize the following text",
+        "Craft a comprehensive summary that captures the essence of the following text",
+        "Provide a concise summary focusing on the main ideas in the given text",
+        "Create a brief summary of the strangest and funniest pieces of trivia from the following text",
+        "Summarize the content, emphasizing significant details and important information",
+        "Enter your own instruction"
+    ]
+
+    # Initialize variables
+    selected_option = 0
+    key = 0
+
+    # Display instruction options
+    while key != 10:  # Enter key
+        stdscr.clear()
+        stdscr.addstr(2, 0, "Choose an instruction option (Use arrow keys to navigate, Enter to select):")
+
+        for i, option in enumerate(instruction_options):
+            stdscr.addstr(4 + i, 4, f"{i + 1}. {option}", curses.A_REVERSE if i == selected_option else curses.A_NORMAL)
+
+        stdscr.refresh()
+
+        key = stdscr.getch()
+
+        if key == curses.KEY_UP and selected_option > 0:
+            selected_option -= 1
+        elif key == curses.KEY_DOWN and selected_option < len(instruction_options) - 1:
+            selected_option += 1
+
+    return instruction_options[selected_option]
+
 def epub_to_text(epub_path):
     book = epub.read_epub(epub_path)
     text = ''
@@ -120,12 +159,11 @@ def main():
     
     epub_path = curses.wrapper(file_picker)
 
-    while not os.path.isfile(epub_path) or not epub_path.lower().endswith('.epub'):
-        print('Invalid file path or file is not an EPUB. Please try again.')
-        epub_path = curses.wrapper(file_picker)
+    instructions = curses.wrapper(get_instruction_input) 
 
-    instructions = input("Enter summarization instructions (or press Enter for default 'Summarize the following text'): ") or "Summarize the following text"
-
+    if instructions == "Enter your own instruction":
+        instructions = input("Enter your custom summarization instructions (or enter for default): ") or "Summarize the following text"
+    
     text = epub_to_text(epub_path)
     chunks = tokenize_into_chunks(text)
     
