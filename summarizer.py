@@ -1,5 +1,10 @@
 import os
+import time
+import sys
+import threading
+import itertools
 import curses
+import warnings
 
 import ebooklib
 from ebooklib import epub
@@ -8,8 +13,27 @@ from nltk.tokenize import word_tokenize
 
 from anthropic import Anthropic, HUMAN_PROMPT, AI_PROMPT
 
-import os
-import curses
+# Suppress specific UserWarning in ebooklib
+warnings.filterwarnings("ignore", category=UserWarning, module="ebooklib.epub")
+
+def animate_processing(seconds=3, width=3):
+    start_time = time.time()
+
+    while True:
+        elapsed_time = time.time() - start_time
+        progress = int((elapsed_time / seconds) * width)
+        bar = f"{'.' * progress}{' ' * (width - progress)}"
+
+        sys.stdout.write('\rSummarizing, please wait' + bar)
+        sys.stdout.flush()
+
+        if elapsed_time > seconds:
+            break
+
+        time.sleep(0.1)
+
+    sys.stdout.write('\r')  # Clear the line
+    sys.stdout.flush()
 
 def get_epub_files():
     current_directory = os.getcwd()
@@ -65,7 +89,7 @@ def epub_to_text(epub_path):
 
     return text
 
-def tokenize_into_chunks(text, chunk_size=90000):
+def tokenize_into_chunks(text, chunk_size=70000):
     tokens = word_tokenize(text)
     chunks = []
 
@@ -76,13 +100,21 @@ def tokenize_into_chunks(text, chunk_size=90000):
     return chunks
 
 def summarize_with_anthropic(text_chunk):
-    anthropic = Anthropic() # might need to add api key here
-    prompt = f"{HUMAN_PROMPT} Craft a comprehensive summary that captures the essence of the following text by highlighting key plot points while infusing it with intriguing, silly or lesser-known details:\n{text_chunk}{AI_PROMPT}"
+    anthropic = Anthropic()
+    prompt = f"{HUMAN_PROMPT} Craft a comprehensive summary that captures the essence of the following text by highlighting key plot points and highlighting any intriguing, humorous, salacious or lesser-known details:\n{text_chunk}{AI_PROMPT}"
+
+    animate_processing()
+
     completion = anthropic.completions.create(
         model="claude-2.1",
         max_tokens_to_sample=100000,
         prompt=prompt,
     )
+
+    # clear the processing animation
+    sys.stdout.write('\r')  # Clear the line
+    sys.stdout.flush()
+
     return completion.completion
 
 def main():
@@ -95,12 +127,11 @@ def main():
 
     text = epub_to_text(epub_path)
     chunks = tokenize_into_chunks(text)
-
+    
     for i, chunk in enumerate(chunks):
 
         summary = summarize_with_anthropic(chunk)
-        print('****************************************************')
-        print(f'Summary for chunk {i + 1}:\n\n{summary}')
+        print(f'Summary of section {i + 1} of {len(chunks)+1}:              \n\n{summary}\n')
 
     print(f'Done! Text has been tokenized and summaries were generated.')
 
