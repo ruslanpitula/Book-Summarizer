@@ -1,4 +1,4 @@
-# Claude-epub-Summarizer
+# Epub-Summarizer
 A sample project using the anthropic/claude API to summarize epub books
 
 ## Install
