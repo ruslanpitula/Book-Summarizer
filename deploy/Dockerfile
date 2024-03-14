@@ -12,11 +12,8 @@ RUN pip3 install \
     anthropic \
     openai \
     Ebooklib \
-    nltk \
     click \
     colorama
-
-RUN python3 -c "import nltk; nltk.download('punkt')"
 
 # Set the working directory
 WORKDIR /app

@@ -4,8 +4,6 @@ import warnings
 import ebooklib
 from ebooklib import epub
 
-from nltk.tokenize import word_tokenize
-
 from colorama import Fore, Style, init
 
 from cli import file_picker, get_instruction_input, model_picker
@@ -21,16 +19,8 @@ def epub_to_text(epub_path):
 
     return text
 
-def tokenize_into_chunks(text, chunk_size=100000):
-    tokens = word_tokenize(text)
-    chunks = []
-
-    for i in range(0, len(tokens), chunk_size):
-        chunk = ' '.join(tokens[i:i+chunk_size])
-        chunks.append(chunk)
-
-    return chunks
-
+def tokenize_into_chunks(text, chunk_size=175000):
+    return [text[i:i+chunk_size] for i in range(0, len(text), chunk_size)]
 
 def main():
     warnings.filterwarnings("ignore", category=UserWarning, module="ebooklib.epub")
