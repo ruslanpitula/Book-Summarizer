@@ -68,7 +68,7 @@ def main():
             print(Fore.YELLOW + f'Processing section {i + 2} of {len(chunks)}, please wait (each section takes about 80 seconds)...')
 
     print(Fore.GREEN + 'Done processing mini_summaries... working on putting it all together')
-    overall_summary=summarize_with_llm(model, mini_summaries,"please combine these mini summaries into one short, succinct and coherent summary. Write no more than two paragraphs (do NOT use bullet points). Write the summary in clear prose, using the Economist's style guide with American spelling. This summary will be published in a magazine. See text below:")
+    overall_summary=summarize_with_llm(model, mini_summaries,"please combine these mini summaries into one short, succinct and coherent summary. Write no more than two paragraphs (do NOT use bullet points). Write the summary in clear prose, using the Economist's style guide with American spelling. If available, put the title, author, language, and country of publication at the top of your summary. This summary will be published in a magazine. See text below:")
     print(f'{Fore.CYAN} Overall Summary:\n\n {overall_summary}\n')
 
     print(Fore.GREEN + 'Done! Text has been tokenized and summaries were generated.')

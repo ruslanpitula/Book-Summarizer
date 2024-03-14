@@ -42,7 +42,7 @@ def model_picker():
 
 def get_instruction_input():
     instruction_options = [
-        "Craft a comprehensive summary (in English, you may need to translate) that captures the essence of the following text by highlighting key plot points, also if there are any any intriguing, humorous, salacious or lesser-known details that are worthwhile, please highlight those as well.",
+        "Craft a comprehensive summary (in English, you may need to translate) that captures the essence of the following text by highlighting key plot points, also if there are any any intriguing, humorous, salacious or lesser-known details that are worthwhile, please highlight those as well. If available, put the title, author, language and country of publication at the top of your summary.",
         "Create a summary of the strangest and funniest pieces of trivia from the following text",
         "Enter your own instruction"
     ]
