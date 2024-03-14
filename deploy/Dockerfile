@@ -7,17 +7,23 @@ RUN apt-get update && \
     python3 \
     python3-pip
 
+# Install Python dependencies
+RUN pip3 install \
+    anthropic \
+    openai \
+    Ebooklib \
+    nltk \
+    click \
+    colorama
+
+RUN python3 -c "import nltk; nltk.download('punkt')"
+
 # Set the working directory
 WORKDIR /app
 
-# Copy the script and requirements files
-COPY summarizer.py /app/
-COPY requirements.txt /app/
+# Copy files
+COPY utils/* /app/
 
-# Install Python dependencies
-RUN pip3 install -r requirements.txt
-
-RUN python3 -c "import nltk; nltk.download('punkt')"
 
 # Run the script
 CMD ["python3", "summarizer.py"]

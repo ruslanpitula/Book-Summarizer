@@ -1,27 +1,16 @@
 # Epub-Summarizer
-A sample project using the anthropic/claude API to summarize epub books
+
+A project that uses LLMs (GPT-4 and Claude 3) summarize epub books 
 
 ## Install
 
 * install docker
-* Get access to the claude API from anthropic
-* Set an environment variable on your machine ```ANTHROPIC_API_KEY```
-
-## Add your .epub files to the project folder
-
-![show file examples](./example_files.png)
+* Set an environment variable on your machine ```ANTHROPIC_API_KEY``` and/or ```OPENAI_API_KEY```
 
 ## Build and Run
 
+* Add your .epub files to the ```books``` folder
 * ```cd``` to project folder
-* ```bash build.sh```
-* ```bash run.sh```
+* ```bash deploy/build.sh```
+* ```bash deploy/run.sh```
 
-## Sample output
-
-![example output](./usage.png)
-
-## TODOs
-
-* fix curses line overflow when picking instruction text
-* better instruction testing

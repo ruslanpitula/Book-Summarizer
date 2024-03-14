@@ -6,13 +6,10 @@ from ebooklib import epub
 
 from nltk.tokenize import word_tokenize
 
-from anthropic import Anthropic, HUMAN_PROMPT, AI_PROMPT
-
 from colorama import Fore, Style, init
 
-#local import from cli.py
-from cli import file_picker, get_instruction_input
-
+from cli import file_picker, get_instruction_input, model_picker
+from llm import summarize_with_llm
 
 
 def epub_to_text(epub_path):
@@ -34,30 +31,19 @@ def tokenize_into_chunks(text, chunk_size=100000):
 
     return chunks
 
-def summarize_with_anthropic(text_chunk, instructions):
-    anthropic = Anthropic()
-
-    completion = anthropic.completions.create(
-        model="claude-2.1",
-        max_tokens_to_sample=200000,
-        prompt=f"{HUMAN_PROMPT} {instructions}:\n{text_chunk}{AI_PROMPT}",
-    )
-
-    return completion.completion
 
 def main():
-    # Suppress specific UserWarning in ebooklib
     warnings.filterwarnings("ignore", category=UserWarning, module="ebooklib.epub")
     
-    # Initialize colorama
     init(autoreset=True)
 
-    # File picker
     print(Fore.BLUE + "Choose an EPUB file:")
     selected_file = file_picker()
     print(Fore.GREEN + f"Selected file: {selected_file}\n")
 
-    # Instruction input
+    print(Fore.BLUE + "Choose an LLM:")
+    model = model_picker()
+
     print(Fore.BLUE + "Choose an instruction option:")
     instructions = get_instruction_input()
 
@@ -65,19 +51,25 @@ def main():
         instructions = input(Fore.BLUE + "Enter your custom summarization instructions (or enter for default): ") or "Summarize the following text"
     print(Fore.GREEN + f"Selected instruction: {instructions}\n")
 
-    # Processing warning
     print(Fore.YELLOW + "Processing file, please wait... (this normally takes about 80 seconds)")
 
-    text = epub_to_text(selected_file)
+    text = epub_to_text('books/'+selected_file)
     chunks = tokenize_into_chunks(text)
+
+    mini_summaries=""
 
     for i, chunk in enumerate(chunks):
 
-        summary = summarize_with_anthropic(chunk, instructions)
+        summary = summarize_with_llm(model, chunk, instructions)
+        mini_summaries+=summary
         print(f'{Fore.CYAN}Summary of section {i + 1} of {len(chunks)}:\n\n{summary}\n')
 
         if i + 2 <= len(chunks):
             print(Fore.YELLOW + f'Processing section {i + 2} of {len(chunks)}, please wait (each section takes about 80 seconds)...')
+
+    print(Fore.GREEN + 'Done processing mini_summaries... working on putting it all together')
+    overall_summary=summarize_with_llm(model, mini_summaries,"please combine these mini summaries into one short, succinct and coherent summary. Write no more than two paragraphs (do NOT use bullet points). Write the summary in clear prose, using the Economist's style guide with American spelling. This summary will be published in a magazine. See text below:")
+    print(f'{Fore.CYAN} Overall Summary:\n\n {overall_summary}\n')
 
     print(Fore.GREEN + 'Done! Text has been tokenized and summaries were generated.')
 
