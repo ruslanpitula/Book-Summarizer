@@ -1,6 +1,6 @@
 # Epub-Summarizer
 
-A project that uses LLMs (GPT-4 and Claude 3) summarize epub books 
+A project that uses LLMs (GPT-4 and Claude 3) summarize books 
 
 ## Install
 
@@ -9,7 +9,7 @@ A project that uses LLMs (GPT-4 and Claude 3) summarize epub books
 
 ## Build and Run
 
-* Add your .epub files to the ```books``` folder
+* Add your .txt or .epub files to the ```books``` folder
 * ```cd``` to project folder
 * ```bash deploy/build.sh```
 * ```bash deploy/run.sh```
